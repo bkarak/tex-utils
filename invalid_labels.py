@@ -9,6 +9,8 @@ class LabelCollection(object):
 		super(LabelCollection, self).__init__()
 		self.__labels = data_structures.ArrayDict()
 		self.__refs = data_structures.ArrayDict()
+		self.__label_regex = re.compile('\\label\{([^}]+)\}')
+		self.__refs_regex = re.compile('\\ref\{([^}]+)\}')
 
 	def update(self, tex_file):
 		fp = open(tex_file, 'r')
@@ -17,17 +19,41 @@ class LabelCollection(object):
 			if len(line.strip()) == 0:
 				continue
 
-			self.__put_labels(line.strip())
+			self.__put_labels(tex_file, line.strip())
+			self.__put_refs(tex_file, line.strip())
 
 		fp.close()
 
-	def __put_labels(self, line):
-		label_re = re.compile('\\label\{([^}]+)\}')
+	def __put_labels(self, tex_file, line):
+		for m in self.__label_regex.findall(line):
+			self.__labels.put(m, tex_file)
 
+	def __put_refs(self, tex_file, line):
+		for m in self.__refs_regex.findall(line):
+			self.__refs.put(m, tex_file)
 
-	def __put_refs(self, line):
-		ref_re = re.compile('\\ref\{([^}]+)\}')
+	def get_labels(self):
+		return self.__labels
 
+	def get_refs(self):
+		return self.__refs
+
+	def validate_labels(self):
+		print "Validating Labels"
+		total = 0
+		warnings = 0
+
+		for k in self.__labels.keys():
+			files = self.__labels.get(k)
+
+			if len(files) > 1:
+				print '%s : %s' % (k, files)
+				warnings += 1
+
+			total += 1
+
+		print 'Labels Found: %d' % (total,)
+		print 'Warnings Found: %d' % (warnings,)
 
 
 def main():
@@ -45,6 +71,11 @@ def main():
 
 	for tex_file in sys.argv[1:]:
 		lbl_col.update(tex_file)
+	
+	lbl_col.validate_labels()
+
+
+
 
 if __name__ == '__main__':
 	main()

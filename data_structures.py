@@ -12,3 +12,9 @@ class ArrayDict(object):
 
 	def get(self, key):
 		return self.__data.get(key, [])
+
+	def keys(self):
+		return self.__data.iterkeys()
+
+	def __str__(self):
+		return self.__data.__str__()
