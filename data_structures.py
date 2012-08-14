@@ -13,6 +13,9 @@ class ArrayDict(object):
 	def get(self, key):
 		return self.__data.get(key, [])
 
+	def has_key(self, key):
+		return (len(self.get(key)) == 0)
+
 	def keys(self):
 		return self.__data.iterkeys()
 

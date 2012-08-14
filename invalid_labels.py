@@ -16,11 +16,12 @@ class LabelCollection(object):
 		fp = open(tex_file, 'r')
 
 		for line in fp:
-			if len(line.strip()) == 0:
+			l = line.strip()
+			if len(l) == 0:
 				continue
 
-			self.__put_labels(tex_file, line.strip())
-			self.__put_refs(tex_file, line.strip())
+			self.__put_labels(tex_file, l)
+			self.__put_refs(tex_file, l)
 
 		fp.close()
 
@@ -39,7 +40,7 @@ class LabelCollection(object):
 		return self.__refs
 
 	def validate_labels(self):
-		print "Validating Labels"
+		print 'Validating Labels'
 		total = 0
 		warnings = 0
 
@@ -53,6 +54,23 @@ class LabelCollection(object):
 			total += 1
 
 		print 'Labels Found: %d' % (total,)
+		print 'Valid Found: %d' % (total - warnings,)
+		print 'Warnings Found: %d' % (warnings,)
+
+	def validate_refs(self):
+		print 'Validating Refs'
+		total = 0
+		warnings = 0
+
+		for k in self.__refs.keys():
+			if not self.__labels.has_key(k):
+				print '%s : %s' % (k, self.__refs.get(k))
+				warnings += 1
+
+			total += 1
+
+		print 'References Found: %d' % (total,)
+		print 'Valid References: %d' % (total - warnings,)
 		print 'Warnings Found: %d' % (warnings,)
 
 
@@ -73,9 +91,7 @@ def main():
 		lbl_col.update(tex_file)
 	
 	lbl_col.validate_labels()
-
-
-
+	lbl_col.validate_refs()
 
 if __name__ == '__main__':
 	main()
