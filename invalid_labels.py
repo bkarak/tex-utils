@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys, re
+
 import data_structures
 
 
@@ -9,14 +10,15 @@ class LabelCollection(object):
 		super(LabelCollection, self).__init__()
 		self.__labels = data_structures.ArrayDict()
 		self.__refs = data_structures.ArrayDict()
-		self.__label_regex = re.compile('\\label\{([^}]+)\}')
-		self.__refs_regex = re.compile('\\ref\{([^}]+)\}')
+		self.__label_regex = re.compile('label\{([^}]+)\}')
+		self.__refs_regex = re.compile('ref\{([^}]+)\}')
 
 	def update(self, tex_file):
 		fp = open(tex_file, 'r')
 
 		for line in fp:
 			l = line.strip()
+
 			if len(l) == 0:
 				continue
 
